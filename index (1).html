@@ -44,33 +44,6 @@
   .nav-links a{color:rgba(248,244,233,0.7);text-decoration:none;font-size:.9rem;font-weight:400;letter-spacing:.05em;text-transform:uppercase;transition:color .2s;}
   .nav-links a:hover{color:var(--gold);}
 
-  /* ── HERO ── */
-  .hero{
-    min-height:100vh;
-    position:relative;
-    display:flex;align-items:center;justify-content:center;flex-direction:column;
-    text-align:center;
-    padding:8rem 2rem 4rem;
-    overflow:hidden;
-    background:radial-gradient(ellipse at 50% 0%, #1b4332 0%, #081c15 70%);
-  }
-  .hero-bg-leaves{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-  .leaf-deco{position:absolute;opacity:.18;}
-  .hero-eyebrow{
-    font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--gold);margin-bottom:1.25rem;font-weight:500;
-  }
-  .hero-title{
-    font-family:'Playfair Display',serif;
-    font-size:clamp(3rem,8vw,7rem);font-weight:900;
-    line-height:1;letter-spacing:-.02em;
-    color:var(--cream);margin-bottom:1rem;
-  }
-  .hero-title em{color:var(--gold);font-style:normal;}
-  .hero-sub{
-    font-size:1.1rem;color:rgba(248,244,233,.65);
-    max-width:520px;line-height:1.8;margin:0 auto 2.5rem;
-  }
   .btn-primary{
     display:inline-flex;align-items:center;gap:.5rem;
     background:var(--leaf);color:var(--cream);
@@ -90,16 +63,9 @@
     letter-spacing:.02em;
   }
   .btn-outline:hover{border-color:var(--gold);transform:translateY(-2px);}
-  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
-  .scroll-indicator{
-    margin-top:4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;
-    color:rgba(248,244,233,.3);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;
-    animation:bob 2s ease-in-out infinite;
-  }
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-
   /* ── FACTS TICKER ── */
   .ticker-wrap{
+    margin-top:68px;
     background:var(--leaf);
     padding:1rem 2rem;
     text-align:center;
@@ -134,7 +100,7 @@
   .container{max-width:1100px;margin:0 auto;}
 
   /* ── UPCOMING EVENT ── */
-  .events-section{background:var(--canopy-dark);}
+  .events-section{background:var(--canopy-dark);padding-top:3rem;}
   .events-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1rem;}
   .event-card{
     background:rgba(27,67,50,.5);
@@ -352,55 +318,6 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
-
-<!-- ── HERO ── -->
-<div class="hero">
-  <div class="hero-bg-leaves" aria-hidden="true">
-    <svg class="leaf-deco" style="top:-40px;left:-60px;width:340px;" viewBox="0 0 340 300" fill="none">
-      <path d="M30 280 Q60 100 280 20 Q200 180 30 280Z" fill="#40916c"/>
-      <path d="M10 260 Q50 120 240 40 Q180 160 10 260Z" fill="#2d6a4f" opacity=".5"/>
-    </svg>
-    <svg class="leaf-deco" style="bottom:-40px;right:-80px;width:400px;transform:scaleX(-1) rotate(-20deg);" viewBox="0 0 340 300" fill="none">
-      <path d="M30 280 Q60 100 280 20 Q200 180 30 280Z" fill="#40916c"/>
-    </svg>
-    <svg class="leaf-deco" style="top:20%;left:5%;width:80px;opacity:.25;" viewBox="0 0 80 140" fill="none">
-      <ellipse cx="40" cy="70" rx="28" ry="60" fill="#52b788" transform="rotate(-15 40 70)"/>
-      <line x1="40" y1="10" x2="40" y2="130" stroke="#2d6a4f" stroke-width="2"/>
-    </svg>
-    <svg class="leaf-deco" style="top:30%;right:8%;width:60px;opacity:.2;" viewBox="0 0 80 140" fill="none">
-      <ellipse cx="40" cy="70" rx="28" ry="60" fill="#52b788" transform="rotate(20 40 70)"/>
-    </svg>
-    <!-- Parrot -->
-    <svg class="leaf-deco" style="top:15%;right:12%;width:90px;opacity:.35;" viewBox="0 0 90 100" fill="none">
-      <ellipse cx="45" cy="55" rx="20" ry="28" fill="#e63946"/>
-      <ellipse cx="45" cy="28" rx="14" ry="14" fill="#e63946"/>
-      <ellipse cx="38" cy="25" rx="6" ry="6" fill="#ffd60a"/>
-      <circle cx="40" cy="23" r="2" fill="#1b4332"/>
-      <path d="M45 38 Q70 30 80 42 Q65 50 45 45Z" fill="#06d6a0"/>
-      <path d="M45 48 Q72 42 82 56 Q65 60 45 55Z" fill="#118ab2"/>
-    </svg>
-    <!-- Butterfly -->
-    <svg class="leaf-deco" style="bottom:25%;left:10%;width:70px;opacity:.3;" viewBox="0 0 70 60" fill="none">
-      <path d="M35 30 Q10 5 5 20 Q8 38 35 35Z" fill="#f4a261"/>
-      <path d="M35 30 Q60 5 65 20 Q62 38 35 35Z" fill="#f4a261"/>
-      <path d="M35 35 Q12 38 8 52 Q20 58 35 45Z" fill="#e76f51"/>
-      <path d="M35 35 Q58 38 62 52 Q50 58 35 45Z" fill="#e76f51"/>
-      <ellipse cx="35" cy="33" rx="3" ry="10" fill="#1b4332"/>
-    </svg>
-  </div>
-
-  <div class="hero-eyebrow">🌿 Protecting the Amazon Rainforest</div>
-  <h1 class="hero-title">Saving our<br/><em>green lungs</em></h1>
-  <p class="hero-sub">Tahogreen is a community-driven nonprofit dedicated to raising awareness, restoring habitats, and inspiring action for the Amazon Rainforest.</p>
-  <div class="hero-btns">
-    <a href="#events" class="btn-primary">See Upcoming Events ↓</a>
-    <a href="#join" class="btn-outline">Become an EcoGuardian</a>
-  </div>
-  <div class="scroll-indicator" aria-hidden="true">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    scroll
-  </div>
-</div>
 
 <!-- ── FACTS TICKER ── -->
 <div class="ticker-wrap" aria-live="polite" aria-atomic="true">

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tahogreen – Protecting the Amazon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --leaf:#2d6a4f;
+    --leaf-light:#40916c;
+    --canopy:#1b4332;
+    --canopy-dark:#081c15;
+    --gold:#d4a017;
+    --cream:#f8f4e9;
+    --mist:#e8f5e9;
+    --bark:#5c3d2e;
+  }
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--canopy-dark);
+    color:var(--cream);
+    overflow-x:hidden;
+  }
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1rem 2.5rem;
+    background:rgba(8,28,21,0.85);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(64,145,108,0.2);
+  }
+  .nav-logo{display:flex;align-items:center;gap:.75rem;}
+  .nav-logo svg{width:40px;height:40px;}
+  .logo-text{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--cream);letter-spacing:.04em;}
+  .logo-text span{color:var(--gold);}
+  .nav-links{display:flex;gap:2rem;list-style:none;}
+  .nav-links a{color:rgba(248,244,233,0.7);text-decoration:none;font-size:.9rem;font-weight:400;letter-spacing:.05em;text-transform:uppercase;transition:color .2s;}
+  .nav-links a:hover{color:var(--gold);}
+
+  /* ── HERO ── */
+  .hero{
+    min-height:100vh;
+    position:relative;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    text-align:center;
+    padding:8rem 2rem 4rem;
+    overflow:hidden;
+    background:radial-gradient(ellipse at 50% 0%, #1b4332 0%, #081c15 70%);
+  }
+  .hero-bg-leaves{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+  .leaf-deco{position:absolute;opacity:.18;}
+  .hero-eyebrow{
+    font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:1.25rem;font-weight:500;
+  }
+  .hero-title{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(3rem,8vw,7rem);font-weight:900;
+    line-height:1;letter-spacing:-.02em;
+    color:var(--cream);margin-bottom:1rem;
+  }
+  .hero-title em{color:var(--gold);font-style:normal;}
+  .hero-sub{
+    font-size:1.1rem;color:rgba(248,244,233,.65);
+    max-width:520px;line-height:1.8;margin:0 auto 2.5rem;
+  }
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:var(--leaf);color:var(--cream);
+    padding:.9rem 2rem;border-radius:100px;
+    font-size:1rem;font-weight:500;text-decoration:none;
+    border:none;cursor:pointer;transition:background .2s,transform .15s;
+    letter-spacing:.02em;
+  }
+  .btn-primary:hover{background:var(--leaf-light);transform:translateY(-2px);}
+  .btn-outline{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:transparent;color:var(--cream);
+    padding:.9rem 2rem;border-radius:100px;
+    font-size:1rem;font-weight:500;text-decoration:none;
+    border:1px solid rgba(248,244,233,.3);cursor:pointer;
+    transition:border-color .2s,transform .15s;
+    letter-spacing:.02em;
+  }
+  .btn-outline:hover{border-color:var(--gold);transform:translateY(-2px);}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+  .scroll-indicator{
+    margin-top:4rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;
+    color:rgba(248,244,233,.3);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;
+    animation:bob 2s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  /* ── FACTS TICKER ── */
+  .ticker-wrap{
+    background:var(--leaf);
+    padding:1rem 2rem;
+    text-align:center;
+    position:relative;overflow:hidden;
+    border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);
+  }
+  .ticker-label{
+    display:inline-block;background:var(--gold);color:var(--canopy-dark);
+    font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+    padding:.2rem .6rem;border-radius:4px;margin-right:1rem;
+  }
+  .ticker-text{
+    font-size:1rem;color:var(--cream);
+    display:inline;transition:opacity .5s;
+  }
+  .ticker-dots{margin-top:.5rem;display:flex;justify-content:center;gap:.4rem;}
+  .ticker-dot{width:6px;height:6px;border-radius:50%;background:rgba(248,244,233,.3);transition:background .3s;}
+  .ticker-dot.active{background:var(--gold);}
+
+  /* ── SECTION BASE ── */
+  section{padding:6rem 2rem;}
+  .section-label{
+    font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:.75rem;font-weight:500;
+  }
+  .section-title{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(1.8rem,4vw,3rem);font-weight:700;
+    color:var(--cream);margin-bottom:1rem;line-height:1.2;
+  }
+  .section-desc{color:rgba(248,244,233,.6);line-height:1.8;max-width:580px;}
+  .container{max-width:1100px;margin:0 auto;}
+
+  /* ── UPCOMING EVENT ── */
+  .events-section{background:var(--canopy-dark);}
+  .events-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1rem;}
+  .event-card{
+    background:rgba(27,67,50,.5);
+    border:1px solid rgba(64,145,108,.35);
+    border-radius:24px;padding:2.5rem;
+    display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+    align-items:center;position:relative;overflow:hidden;
+  }
+  .event-card::before{
+    content:'';position:absolute;top:-60px;right:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:rgba(64,145,108,.12);
+  }
+  .event-badge{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:var(--gold);color:var(--canopy-dark);
+    font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:.3rem .8rem;border-radius:100px;margin-bottom:1rem;
+    width:fit-content;
+  }
+  .event-name{
+    font-family:'Playfair Display',serif;
+    font-size:2rem;font-weight:700;color:var(--cream);
+    margin-bottom:.75rem;line-height:1.2;
+  }
+  .event-meta{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
+  .event-meta-item{display:flex;align-items:center;gap:.5rem;color:rgba(248,244,233,.6);font-size:.9rem;}
+  .event-meta-item svg{flex-shrink:0;color:var(--gold);}
+  .event-visual{
+    background:rgba(64,145,108,.15);border-radius:16px;
+    height:260px;display:flex;align-items:center;justify-content:center;
+    border:1px dashed rgba(64,145,108,.4);
+    font-size:.85rem;color:rgba(248,244,233,.35);
+    text-align:center;padding:2rem;line-height:1.8;
+  }
+  .stalls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2.5rem;}
+  .stall-card{
+    background:rgba(27,67,50,.4);border:1px solid rgba(64,145,108,.2);
+    border-radius:16px;padding:1.25rem;
+    transition:border-color .2s,transform .2s;
+  }
+  .stall-card:hover{border-color:var(--leaf-light);transform:translateY(-3px);}
+  .stall-icon{font-size:1.6rem;margin-bottom:.5rem;}
+  .stall-name{font-weight:500;color:var(--cream);font-size:.95rem;margin-bottom:.25rem;}
+  .stall-desc{font-size:.8rem;color:rgba(248,244,233,.5);line-height:1.5;}
+
+  /* ── ECOGUARDIAN ── */
+  .eco-section{
+    background:var(--leaf);
+    position:relative;overflow:hidden;
+    text-align:center;
+  }
+  .eco-section::before{
+    content:'';position:absolute;
+    bottom:0;left:0;right:0;height:200px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 200'%3E%3Cpath fill='%23081c15' fill-opacity='1' d='M0,160L48,144C96,128,192,96,288,90.7C384,85,480,107,576,112C672,117,768,107,864,101.3C960,96,1056,96,1152,101.3C1248,107,1344,117,1392,122.7L1440,128L1440,200L1392,200C1344,200,1248,200,1152,200C1056,200,960,200,864,200C768,200,672,200,576,200C480,200,384,200,288,200C192,200,96,200,48,200L0,200Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom center / cover;
+  }
+  .eco-section::after{
+    content:'';position:absolute;
+    top:0;left:0;right:0;height:200px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 200'%3E%3Cpath fill='%23081c15' fill-opacity='1' d='M0,64L48,80C96,96,192,128,288,133.3C384,139,480,117,576,112C672,107,768,117,864,122.7C960,128,1056,128,1152,117.3C1248,107,1344,85,1392,74.7L1440,64L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat top center / cover;
+  }
+  .eco-inner{position:relative;z-index:1;max-width:700px;margin:0 auto;}
+  .eco-inner .section-title{color:var(--canopy-dark);}
+  .eco-inner .section-desc{color:rgba(8,28,21,.7);max-width:none;}
+  .eco-perks{display:flex;justify-content:center;gap:2rem;margin:2rem 0;flex-wrap:wrap;}
+  .eco-perk{display:flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--canopy-dark);font-weight:500;}
+  .eco-perk svg{color:var(--canopy-dark);}
+  .btn-dark{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:var(--canopy-dark);color:var(--cream);
+    padding:.9rem 2rem;border-radius:100px;
+    font-size:1rem;font-weight:500;text-decoration:none;
+    border:none;cursor:pointer;transition:opacity .2s,transform .15s;
+  }
+  .btn-dark:hover{opacity:.85;transform:translateY(-2px);}
+
+  /* ── GALLERY ── */
+  .gallery-section{background:var(--canopy-dark);}
+  .carousel-track-wrap{overflow:hidden;margin:0 -2rem;padding:0 2rem;}
+  .carousel-track{
+    display:flex;gap:1.25rem;
+    transition:transform .5s cubic-bezier(.4,0,.2,1);
+    cursor:grab;
+  }
+  .carousel-track:active{cursor:grabbing;}
+  .gallery-img{
+    flex-shrink:0;width:320px;height:220px;
+    border-radius:16px;overflow:hidden;
+    background:rgba(27,67,50,.4);border:1px solid rgba(64,145,108,.2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.8rem;color:rgba(248,244,233,.3);text-align:center;padding:1rem;
+    position:relative;
+  }
+  .gallery-img-label{
+    position:absolute;bottom:.75rem;left:.75rem;
+    background:rgba(8,28,21,.8);color:var(--cream);
+    font-size:.75rem;padding:.25rem .6rem;border-radius:6px;
+  }
+  .carousel-controls{display:flex;gap:.75rem;margin-top:1.5rem;}
+  .carousel-btn{
+    width:44px;height:44px;border-radius:50%;
+    background:rgba(64,145,108,.2);border:1px solid rgba(64,145,108,.3);
+    color:var(--cream);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .2s;font-size:1.1rem;
+  }
+  .carousel-btn:hover{background:var(--leaf);}
+
+  /* ── ACHIEVEMENTS ── */
+  .achieve-section{background:#0d2818;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;margin-top:3rem;}
+  .stat-card{
+    background:rgba(27,67,50,.4);border:1px solid rgba(64,145,108,.2);
+    border-radius:16px;padding:1.75rem 1.5rem;text-align:center;
+    transition:border-color .25s,transform .25s;
+  }
+  .stat-card:hover{border-color:var(--gold);transform:translateY(-4px);}
+  .stat-num{
+    font-family:'Playfair Display',serif;
+    font-size:2.8rem;font-weight:900;color:var(--gold);line-height:1;
+    margin-bottom:.25rem;
+  }
+  .stat-label{font-size:.85rem;color:rgba(248,244,233,.5);letter-spacing:.05em;}
+
+  /* ── FOOTER ── */
+  footer{
+    background:var(--canopy-dark);
+    border-top:1px solid rgba(64,145,108,.2);
+    padding:4rem 2rem 2rem;
+  }
+  .footer-inner{max-width:1100px;margin:0 auto;}
+  .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem;}
+  .footer-brand p{color:rgba(248,244,233,.5);font-size:.9rem;line-height:1.8;margin-top:.75rem;max-width:280px;}
+  .footer-col h4{color:var(--cream);font-size:.85rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;}
+  .footer-col ul{list-style:none;}
+  .footer-col ul li{margin-bottom:.6rem;}
+  .footer-col ul a{color:rgba(248,244,233,.5);text-decoration:none;font-size:.9rem;transition:color .2s;}
+  .footer-col ul a:hover{color:var(--gold);}
+  .socials{display:flex;gap:.75rem;margin-top:1.25rem;}
+  .social-btn{
+    width:40px;height:40px;border-radius:10px;
+    background:rgba(64,145,108,.15);border:1px solid rgba(64,145,108,.25);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(248,244,233,.6);text-decoration:none;
+    transition:background .2s,color .2s,border-color .2s;
+    font-size:1.1rem;
+  }
+  .social-btn:hover{background:var(--leaf);color:var(--cream);border-color:var(--leaf-light);}
+  .footer-bottom{
+    border-top:1px solid rgba(64,145,108,.15);
+    padding-top:1.5rem;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+  }
+  .footer-bottom p{color:rgba(248,244,233,.3);font-size:.8rem;}
+
+  /* ── DECORATIVE PLANTS ── */
+  .plant-corner{position:absolute;pointer-events:none;opacity:.5;}
+
+  /* ── MODAL ── */
+  .modal-overlay{
+    display:none;position:fixed;inset:0;z-index:200;
+    background:rgba(8,28,21,.85);backdrop-filter:blur(8px);
+    align-items:center;justify-content:center;padding:2rem;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:#0d2818;border:1px solid rgba(64,145,108,.4);
+    border-radius:24px;padding:2.5rem;max-width:700px;width:100%;
+    max-height:80vh;overflow-y:auto;position:relative;
+  }
+  .modal-close{
+    position:absolute;top:1.25rem;right:1.25rem;
+    background:none;border:none;color:rgba(248,244,233,.5);
+    font-size:1.5rem;cursor:pointer;transition:color .2s;
+  }
+  .modal-close:hover{color:var(--cream);}
+  .calendar-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:1.5rem;
+    font-size:.8rem;
+  }
+  .cal-header{text-align:center;padding:.4rem;color:rgba(248,244,233,.4);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;}
+  .cal-day{
+    text-align:center;padding:.5rem .2rem;border-radius:8px;
+    color:rgba(248,244,233,.4);cursor:default;
+  }
+  .cal-day.has-event{
+    background:rgba(64,145,108,.2);color:var(--cream);
+    cursor:pointer;border:1px solid rgba(64,145,108,.35);
+    transition:background .2s;
+  }
+  .cal-day.has-event:hover{background:rgba(64,145,108,.4);}
+  .cal-day.today{background:var(--gold);color:var(--canopy-dark);font-weight:700;}
+  .cal-day.empty{opacity:0;}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="20" fill="#2d6a4f"/>
+      <path d="M20 8 C14 14 10 18 10 23 C10 29 14.5 33 20 33 C25.5 33 30 29 30 23 C30 18 26 14 20 8Z" fill="#40916c"/>
+      <path d="M20 14 C16 18 14 21 14 24 C14 27.3 16.7 30 20 30 C23.3 30 26 27.3 26 24 C26 21 24 18 20 14Z" fill="#d4a017"/>
+      <rect x="19" y="28" width="2" height="6" rx="1" fill="#1b4332"/>
+    </svg>
+    <span class="logo-text">Taho<span>green</span></span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#events">Events</a></li>
+    <li><a href="#join">Join Us</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-bg-leaves" aria-hidden="true">
+    <svg class="leaf-deco" style="top:-40px;left:-60px;width:340px;" viewBox="0 0 340 300" fill="none">
+      <path d="M30 280 Q60 100 280 20 Q200 180 30 280Z" fill="#40916c"/>
+      <path d="M10 260 Q50 120 240 40 Q180 160 10 260Z" fill="#2d6a4f" opacity=".5"/>
+    </svg>
+    <svg class="leaf-deco" style="bottom:-40px;right:-80px;width:400px;transform:scaleX(-1) rotate(-20deg);" viewBox="0 0 340 300" fill="none">
+      <path d="M30 280 Q60 100 280 20 Q200 180 30 280Z" fill="#40916c"/>
+    </svg>
+    <svg class="leaf-deco" style="top:20%;left:5%;width:80px;opacity:.25;" viewBox="0 0 80 140" fill="none">
+      <ellipse cx="40" cy="70" rx="28" ry="60" fill="#52b788" transform="rotate(-15 40 70)"/>
+      <line x1="40" y1="10" x2="40" y2="130" stroke="#2d6a4f" stroke-width="2"/>
+    </svg>
+    <svg class="leaf-deco" style="top:30%;right:8%;width:60px;opacity:.2;" viewBox="0 0 80 140" fill="none">
+      <ellipse cx="40" cy="70" rx="28" ry="60" fill="#52b788" transform="rotate(20 40 70)"/>
+    </svg>
+    <!-- Parrot -->
+    <svg class="leaf-deco" style="top:15%;right:12%;width:90px;opacity:.35;" viewBox="0 0 90 100" fill="none">
+      <ellipse cx="45" cy="55" rx="20" ry="28" fill="#e63946"/>
+      <ellipse cx="45" cy="28" rx="14" ry="14" fill="#e63946"/>
+      <ellipse cx="38" cy="25" rx="6" ry="6" fill="#ffd60a"/>
+      <circle cx="40" cy="23" r="2" fill="#1b4332"/>
+      <path d="M45 38 Q70 30 80 42 Q65 50 45 45Z" fill="#06d6a0"/>
+      <path d="M45 48 Q72 42 82 56 Q65 60 45 55Z" fill="#118ab2"/>
+    </svg>
+    <!-- Butterfly -->
+    <svg class="leaf-deco" style="bottom:25%;left:10%;width:70px;opacity:.3;" viewBox="0 0 70 60" fill="none">
+      <path d="M35 30 Q10 5 5 20 Q8 38 35 35Z" fill="#f4a261"/>
+      <path d="M35 30 Q60 5 65 20 Q62 38 35 35Z" fill="#f4a261"/>
+      <path d="M35 35 Q12 38 8 52 Q20 58 35 45Z" fill="#e76f51"/>
+      <path d="M35 35 Q58 38 62 52 Q50 58 35 45Z" fill="#e76f51"/>
+      <ellipse cx="35" cy="33" rx="3" ry="10" fill="#1b4332"/>
+    </svg>
+  </div>
+
+  <div class="hero-eyebrow">🌿 Protecting the Amazon Rainforest</div>
+  <h1 class="hero-title">Saving our<br/><em>green lungs</em></h1>
+  <p class="hero-sub">Tahogreen is a community-driven nonprofit dedicated to raising awareness, restoring habitats, and inspiring action for the Amazon Rainforest.</p>
+  <div class="hero-btns">
+    <a href="#events" class="btn-primary">See Upcoming Events ↓</a>
+    <a href="#join" class="btn-outline">Become an EcoGuardian</a>
+  </div>
+  <div class="scroll-indicator" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    scroll
+  </div>
+</div>
+
+<!-- ── FACTS TICKER ── -->
+<div class="ticker-wrap" aria-live="polite" aria-atomic="true">
+  <span class="ticker-label">Did you know?</span>
+  <span class="ticker-text" id="tickerText"></span>
+  <div class="ticker-dots" id="tickerDots" aria-hidden="true"></div>
+</div>
+
+<!-- ── EVENTS ── -->
+<section class="events-section" id="events">
+  <div class="container">
+    <div class="events-header">
+      <div>
+        <p class="section-label">📅 What's coming up</p>
+        <h2 class="section-title">Next Event</h2>
+        <p class="section-desc">Join us at our upcoming community gathering. See our stalls, meet the team, and help make a difference.</p>
+      </div>
+      <button class="btn-outline" onclick="document.getElementById('calModal').classList.add('open')">
+        View Full Calendar →
+      </button>
+    </div>
+
+    <div class="event-card">
+      <div>
+        <div class="event-badge">🌱 Upcoming</div>
+        <div class="event-name">Amazon Earth Fair 2025</div>
+        <div class="event-meta">
+          <div class="event-meta-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Saturday, August 16, 2025 · 10:00 AM – 4:00 PM
+          </div>
+          <div class="event-meta-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.3 4 8 4 8s4-4.7 4-8c0-2.2-1.8-4-4-4z" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            Tahogreen Community Park, Auburn WA
+          </div>
+          <div class="event-meta-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Free Admission · Family Friendly
+          </div>
+        </div>
+        <a href="#join" class="btn-primary" style="font-size:.9rem;padding:.75rem 1.5rem;">Register Now →</a>
+      </div>
+      <div class="event-visual">
+        📸 Upload your event poster or banner image here<br/><br/>
+        <code style="font-size:.75rem;opacity:.6;">&lt;img src="event-poster.jpg"/&gt;</code>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;">
+      <p class="section-label" style="margin-bottom:1rem;">🏪 Stalls at this event</p>
+      <div class="stalls-grid">
+        <div class="stall-card"><div class="stall-icon">🌿</div><div class="stall-name">Native Plants</div><div class="stall-desc">Take home plants native to the Amazon ecosystem.</div></div>
+        <div class="stall-card"><div class="stall-icon">🎨</div><div class="stall-name">Art & Crafts</div><div class="stall-desc">Rainforest-inspired art by local community artists.</div></div>
+        <div class="stall-card"><div class="stall-icon">🍃</div><div class="stall-name">Eco Merch</div><div class="stall-desc">Sustainable Tahogreen merchandise & tote bags.</div></div>
+        <div class="stall-card"><div class="stall-icon">📚</div><div class="stall-name">Education Hub</div><div class="stall-desc">Interactive displays about Amazon biodiversity.</div></div>
+        <div class="stall-card"><div class="stall-icon">🥘</div><div class="stall-name">Amazon Foods</div><div class="stall-desc">Taste foods that originate from the Amazon region.</div></div>
+        <div class="stall-card"><div class="stall-icon">🐸</div><div class="stall-name">Wildlife Corner</div><div class="stall-desc">Meet our wildlife ambassadors and learn their stories.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ECOGUARDIAN ── -->
+<section class="eco-section" id="join" style="padding:8rem 2rem;">
+  <div class="eco-inner">
+    <p class="section-label" style="color:var(--canopy-dark);opacity:.6;">🛡 Volunteer Program</p>
+    <h2 class="section-title">Become an EcoGuardian</h2>
+    <p class="section-desc" style="margin:1rem auto 1.5rem;">Join our volunteer program and help protect the Amazon while earning verified volunteer hours. Every action counts — from planting drives to community outreach.</p>
+    <div class="eco-perks">
+      <div class="eco-perk">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Volunteer hours certificate
+      </div>
+      <div class="eco-perk">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Exclusive EcoGuardian badge
+      </div>
+      <div class="eco-perk">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Community impact reports
+      </div>
+    </div>
+    <a href="mailto:volunteer@tahogreen.org" class="btn-dark">Apply to Volunteer →</a>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="gallery-section" id="gallery">
+  <div class="container">
+    <p class="section-label">📷 Our Mission in Pictures</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+      <h2 class="section-title">Gallery</h2>
+      <div class="carousel-controls">
+        <button class="carousel-btn" onclick="slide(-1)" aria-label="Previous">←</button>
+        <button class="carousel-btn" onclick="slide(1)" aria-label="Next">→</button>
+      </div>
+    </div>
+    <div class="carousel-track-wrap">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="gallery-img">📷 Add your photo here<br/><code style="font-size:.7rem;opacity:.5;margin-top:.5rem;display:block;">gallery/img1.jpg</code><div class="gallery-img-label">Amazon Restoration</div></div>
+        <div class="gallery-img">📷 Add your photo here<br/><code style="font-size:.7rem;opacity:.5;margin-top:.5rem;display:block;">gallery/img2.jpg</code><div class="gallery-img-label">Community Plant Drive</div></div>
+        <div class="gallery-img">📷 Add your photo here<br/><code style="font-size:.7rem;opacity:.5;margin-top:.5rem;display:block;">gallery/img3.jpg</code><div class="gallery-img-label">Wildlife Watch</div></div>
+        <div class="gallery-img">📷 Add your photo here<br/><code style="font-size:.7rem;opacity:.5;margin-top:.5rem;display:block;">gallery/img4.jpg</code><div class="gallery-img-label">Earth Fair 2024</div></div>
+        <div class="gallery-img">📷 Add your photo here<br/><code style="font-size:.7rem;opacity:.5;margin-top:.5rem;display:block;">gallery/img5.jpg</code><div class="gallery-img-label">School Outreach</div></div>
+        <div class="gallery-img">📷 Add your photo here<br/><code style="font-size:.7rem;opacity:.5;margin-top:.5rem;display:block;">gallery/img6.jpg</code><div class="gallery-img-label">Volunteer Day</div></div>
+      </div>
+    </div>
+    <p style="margin-top:1.25rem;font-size:.8rem;color:rgba(248,244,233,.3);">Drag to scroll · Replace placeholder divs with &lt;img&gt; tags pointing to your photos</p>
+  </div>
+</section>
+
+<!-- ── ACHIEVEMENTS ── -->
+<section class="achieve-section" id="about">
+  <div class="container">
+    <p class="section-label">🏆 Our Impact</p>
+    <h2 class="section-title">What We've Achieved</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">1,200+</div><div class="stat-label">Volunteer Hours Logged</div></div>
+      <div class="stat-card"><div class="stat-num">4,000</div><div class="stat-label">Trees Planted</div></div>
+      <div class="stat-card"><div class="stat-num">18</div><div class="stat-label">Community Events</div></div>
+      <div class="stat-card"><div class="stat-num">320+</div><div class="stat-label">Active EcoGuardians</div></div>
+      <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">School Partnerships</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="logo-text">Taho<span>green</span></span>
+        <p>A student-led nonprofit dedicated to protecting the Amazon Rainforest through community events, education, and action.</p>
+        <div class="socials" aria-label="Social media links">
+          <!-- Instagram -->
+          <a href="https://instagram.com/tahogreen" class="social-btn" aria-label="Instagram" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <!-- TikTok -->
+          <a href="https://tiktok.com/@tahogreen" class="social-btn" aria-label="TikTok" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34v-6.8a8.18 8.18 0 004.78 1.52V6.59a4.85 4.85 0 01-1.01.1z"/></svg>
+          </a>
+          <!-- YouTube -->
+          <a href="https://youtube.com/@tahogreen" class="social-btn" aria-label="YouTube" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9l6 3-6 3V9z" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <!-- Email -->
+          <a href="mailto:hello@tahogreen.org" class="social-btn" aria-label="Email">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8l10 6 10-6" stroke-linecap="round"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Learn More</h4>
+        <ul>
+          <li><a href="#">About Tahogreen</a></li>
+          <li><a href="#">Our Mission</a></li>
+          <li><a href="#">The Amazon</a></li>
+          <li><a href="#">Impact Reports</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Our Team</h4>
+        <ul>
+          <li><a href="#">Leadership</a></li>
+          <li><a href="#">Volunteers</a></li>
+          <li><a href="#">Partners</a></li>
+          <li><a href="#">Join Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul>
+          <li><a href="mailto:hello@tahogreen.org">hello@tahogreen.org</a></li>
+          <li><a href="#">Instagram DMs</a></li>
+          <li><a href="#">Press Inquiries</a></li>
+          <li><a href="#">Partnerships</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Tahogreen. All rights reserved. Made with 💚 for the Amazon.</p>
+      <p>Auburn, WA · student-led nonprofit</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ── CALENDAR MODAL ── -->
+<div class="modal-overlay" id="calModal" role="dialog" aria-modal="true" aria-label="Events Calendar">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('calModal').classList.remove('open')" aria-label="Close">✕</button>
+    <p class="section-label">📅 Events Calendar</p>
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);margin-bottom:.5rem;">August 2025</h3>
+    <p style="font-size:.85rem;color:rgba(248,244,233,.4);">Highlighted dates have events. Click to see details.</p>
+    <div class="calendar-grid" id="calGrid"></div>
+    <div style="margin-top:1.5rem;background:rgba(64,145,108,.1);border:1px solid rgba(64,145,108,.3);border-radius:12px;padding:1.25rem;">
+      <div style="font-weight:500;color:var(--cream);margin-bottom:.4rem;">🌱 Amazon Earth Fair 2025</div>
+      <div style="font-size:.85rem;color:rgba(248,244,233,.5);">August 16, 2025 · 10:00 AM – 4:00 PM · Community Park, Auburn WA</div>
+    </div>
+    <p style="margin-top:1.5rem;font-size:.8rem;color:rgba(248,244,233,.3);">Add more events by editing the calendar data in <code>script.js</code></p>
+  </div>
+</div>
+
+<script>
+  // ── TICKER ──
+  const facts = [
+    "The Amazon Rainforest produces 20% of the world's oxygen — earning it the nickname 'the lungs of the Earth.'",
+    "Over 10% of all species on Earth live in the Amazon Rainforest.",
+    "The Amazon River discharges more water into the ocean than any other river — about 20% of all freshwater flow worldwide.",
+    "An estimated 400–500 indigenous tribes live in the Amazon, some never having had contact with the outside world.",
+    "The Amazon Rainforest is home to over 40,000 plant species, 3,000 types of fish, and 1,300 bird species.",
+    "Tahogreen's mission: raise awareness, restore habitats, and inspire a generation of EcoGuardians.",
+    "Every minute, the equivalent of 40 football fields of rainforest is lost to deforestation.",
+    "The Amazon spans 9 countries and covers 5.5 million square kilometers — larger than the continental United States.",
+  ];
+  let tickerIndex = 0;
+  const tickerText = document.getElementById('tickerText');
+  const tickerDots = document.getElementById('tickerDots');
+
+  function buildDots(){
+    tickerDots.innerHTML = '';
+    facts.forEach((_,i)=>{
+      const d = document.createElement('div');
+      d.className='ticker-dot'+(i===0?' active':'');
+      tickerDots.appendChild(d);
+    });
+  }
+  function updateTicker(){
+    tickerText.style.opacity='0';
+    setTimeout(()=>{
+      tickerText.textContent = facts[tickerIndex];
+      tickerText.style.opacity='1';
+      document.querySelectorAll('.ticker-dot').forEach((d,i)=>{
+        d.classList.toggle('active',i===tickerIndex);
+      });
+    },500);
+    tickerIndex=(tickerIndex+1)%facts.length;
+  }
+  buildDots();
+  tickerText.textContent = facts[0];
+  tickerIndex = 1;
+  setInterval(updateTicker,8000);
+
+  // ── CAROUSEL ──
+  const track = document.getElementById('carouselTrack');
+  let pos = 0;
+  const cardW = 320+20;
+  const maxPos = () => -(track.children.length-3)*cardW;
+  function slide(dir){
+    pos = Math.max(maxPos(), Math.min(0, pos + dir*-cardW));
+    track.style.transform=`translateX(${pos}px)`;
+  }
+  // drag-to-scroll
+  let startX, startPos, dragging=false;
+  track.addEventListener('mousedown',e=>{startX=e.clientX;startPos=pos;dragging=true;});
+  window.addEventListener('mousemove',e=>{if(!dragging)return;pos=Math.max(maxPos(),Math.min(0,startPos+(e.clientX-startX)));track.style.transform=`translateX(${pos}px)`;});
+  window.addEventListener('mouseup',()=>{dragging=false;});
+
+  // ── CALENDAR ──
+  const eventDays=[16];
+  function buildCal(){
+    const grid=document.getElementById('calGrid');
+    const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+    days.forEach(d=>{const el=document.createElement('div');el.className='cal-header';el.textContent=d;grid.appendChild(el);});
+    const firstDay=new Date(2025,7,1).getDay();
+    for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
+    for(let d=1;d<=31;d++){
+      const el=document.createElement('div');
+      el.className='cal-day';
+      el.textContent=d;
+      if(eventDays.includes(d)){el.classList.add('has-event');}
+      grid.appendChild(el);
+    }
+  }
+  buildCal();
+
+  // close modal on backdrop click
+  document.getElementById('calModal').addEventListener('click',function(e){
+    if(e.target===this)this.classList.remove('open');
+  });
+</script>
+</body>
+</html>

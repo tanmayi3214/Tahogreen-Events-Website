@@ -273,10 +273,10 @@
   }
   .modal-overlay.open{display:flex;}
   .modal{
-    background:#f7faf6;border:1px solid rgba(123,158,135,.3);
+    background:#ddeadd;border:2px solid rgba(123,158,135,.55);
     border-radius:24px;padding:2.5rem;max-width:700px;width:100%;
     max-height:80vh;overflow-y:auto;position:relative;
-    box-shadow:0 8px 40px rgba(123,158,135,.15);
+    box-shadow:0 20px 70px rgba(30,61,40,.4), 0 4px 20px rgba(30,61,40,.2);
   }
   .modal-close{
     position:absolute;top:1.25rem;right:1.25rem;
@@ -292,13 +292,14 @@
   .cal-day{
     text-align:center;padding:.5rem .2rem;border-radius:8px;
     color:var(--text-muted);cursor:default;
+    background:rgba(123,158,135,.18);
   }
   .cal-day.has-event{
-    background:rgba(123,158,135,.15);color:var(--canopy);
-    cursor:pointer;border:1px solid rgba(123,158,135,.35);
-    transition:background .2s;
+    background:rgba(123,158,135,.5);color:var(--canopy);
+    cursor:pointer;border:1px solid rgba(123,158,135,.65);
+    font-weight:600;transition:background .2s;
   }
-  .cal-day.has-event:hover{background:rgba(123,158,135,.3);}
+  .cal-day.has-event:hover{background:rgba(123,158,135,.68);}
   .cal-day.today{background:var(--leaf);color:#ffffff;font-weight:700;}
   .cal-day.empty{opacity:0;}
 </style>
@@ -519,7 +520,7 @@
     <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--canopy);margin-bottom:.5rem;">August 2025</h3>
     <p style="font-size:.85rem;color:var(--text-muted);">Highlighted dates have events. Click to see details.</p>
     <div class="calendar-grid" id="calGrid"></div>
-    <div style="margin-top:1.5rem;background:rgba(123,158,135,.12);border:1px solid rgba(123,158,135,.3);border-radius:12px;padding:1.25rem;">
+    <div style="margin-top:1.5rem;background:rgba(123,158,135,.3);border:1px solid rgba(123,158,135,.55);border-radius:12px;padding:1.25rem;">
       <div style="font-weight:500;color:var(--canopy);margin-bottom:.4rem;">🌱 Amazon Earth Fair 2025</div>
       <div style="font-size:.85rem;color:var(--text-muted);">August 16, 2025 · 10:00 AM – 4:00 PM · Community Park, Auburn WA</div>
     </div>

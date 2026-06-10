@@ -570,9 +570,15 @@
 
   async function gcalFetch(params){
     const qs = new URLSearchParams({key:GCAL_KEY, singleEvents:'true', ...params}).toString();
-    const res = await fetch(GCAL_BASE + encodeURIComponent(GCAL_ID) + '/events?' + qs);
-    if(!res.ok) throw new Error('Calendar API ' + res.status);
-    return res.json();
+    const url = GCAL_BASE + encodeURIComponent(GCAL_ID) + '/events?' + qs;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(!res.ok){
+      const msg = data?.error?.message || ('HTTP ' + res.status);
+      console.error('Google Calendar API error:', data);
+      throw new Error(msg);
+    }
+    return data;
   }
 
   function parseEvDate(dt){ return dt.dateTime ? new Date(dt.dateTime) : new Date(dt.date+'T00:00:00'); }
@@ -624,8 +630,8 @@
       if(ev.htmlLink){ btn.href=ev.htmlLink; btn.target='_blank'; btn.rel='noopener'; }
     } catch(err){
       console.error('loadNextEvent:', err);
-      document.getElementById('eventName').textContent = 'Unable to load event';
-      document.getElementById('eventMeta').innerHTML = '<div class="event-meta-item" style="opacity:.6;">Could not reach Google Calendar. Please try again later.</div>';
+      document.getElementById('eventName').textContent = 'Could not load event';
+      document.getElementById('eventMeta').innerHTML = `<div class="event-meta-item" style="opacity:.8;font-size:.85rem;">⚠️ ${esc(err.message)}</div>`;
     }
   }
 
@@ -649,7 +655,10 @@
       const tMax = new Date(calYear, calMonth+1, 1).toISOString();
       const data = await gcalFetch({timeMin:tMin, timeMax:tMax, orderBy:'startTime', maxResults:'50'});
       events = data.items || [];
-    } catch(e){ console.error('renderCalendar:', e); }
+    } catch(e){
+      console.error('renderCalendar:', e);
+      list.innerHTML = `<p style="font-size:.85rem;color:var(--text-muted);margin-top:1.25rem;">⚠️ ${esc(e.message)}</p>`;
+    }
 
     // Map events by day
     const byDay = {};

@@ -342,7 +342,7 @@
         <h2 class="section-title">Next Event</h2>
         <p class="section-desc">Join us at our upcoming community gathering. See our stalls, meet the team, and help make a difference.</p>
       </div>
-      <button class="btn-outline" onclick="document.getElementById('calModal').classList.add('open')">
+      <button class="btn-outline" onclick="openCalendar()">
         View Full Calendar →
       </button>
     </div>
@@ -350,22 +350,11 @@
     <div class="event-card">
       <div>
         <div class="event-badge">🌱 Upcoming</div>
-        <div class="event-name">Amazon Earth Fair 2025</div>
-        <div class="event-meta">
-          <div class="event-meta-item">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            Saturday, August 16, 2025 · 10:00 AM – 4:00 PM
-          </div>
-          <div class="event-meta-item">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.3 4 8 4 8s4-4.7 4-8c0-2.2-1.8-4-4-4z" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
-            Tahogreen Community Park, Auburn WA
-          </div>
-          <div class="event-meta-item">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            Free Admission · Family Friendly
-          </div>
+        <div class="event-name" id="eventName">Loading next event…</div>
+        <div class="event-meta" id="eventMeta">
+          <div class="event-meta-item" style="opacity:.5;">Fetching from Google Calendar…</div>
         </div>
-        <a href="#join" class="btn-primary" style="font-size:.9rem;padding:.75rem 1.5rem;">Register Now →</a>
+        <a href="#join" class="btn-primary" id="eventRegisterBtn" style="font-size:.9rem;padding:.75rem 1.5rem;">Register Now →</a>
       </div>
       <div class="event-visual">
         📸 Upload your event poster or banner image here<br/><br/>
@@ -517,14 +506,14 @@
   <div class="modal">
     <button class="modal-close" onclick="document.getElementById('calModal').classList.remove('open')" aria-label="Close">✕</button>
     <p class="section-label">📅 Events Calendar</p>
-    <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--canopy);margin-bottom:.5rem;">August 2025</h3>
-    <p style="font-size:.85rem;color:var(--text-muted);">Highlighted dates have events. Click to see details.</p>
-    <div class="calendar-grid" id="calGrid"></div>
-    <div style="margin-top:1.5rem;background:rgba(123,158,135,.3);border:1px solid rgba(123,158,135,.55);border-radius:12px;padding:1.25rem;">
-      <div style="font-weight:500;color:var(--canopy);margin-bottom:.4rem;">🌱 Amazon Earth Fair 2025</div>
-      <div style="font-size:.85rem;color:var(--text-muted);">August 16, 2025 · 10:00 AM – 4:00 PM · Community Park, Auburn WA</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+      <button id="calPrev" class="carousel-btn" aria-label="Previous month">←</button>
+      <h3 id="calMonthTitle" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--canopy);text-align:center;flex:1;margin:0 .75rem;"></h3>
+      <button id="calNext" class="carousel-btn" aria-label="Next month">→</button>
     </div>
-    <p style="margin-top:1.5rem;font-size:.8rem;color:var(--text-muted);">Add more events by editing the calendar data in <code>script.js</code></p>
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.25rem;">Highlighted dates have events. Click a date to jump to details.</p>
+    <div class="calendar-grid" id="calGrid"></div>
+    <div id="calEventsList"></div>
   </div>
 </div>
 
@@ -543,68 +532,190 @@
   let tickerIndex = 0;
   const tickerText = document.getElementById('tickerText');
   const tickerDots = document.getElementById('tickerDots');
-
   function buildDots(){
-    tickerDots.innerHTML = '';
-    facts.forEach((_,i)=>{
-      const d = document.createElement('div');
-      d.className='ticker-dot'+(i===0?' active':'');
-      tickerDots.appendChild(d);
-    });
+    tickerDots.innerHTML='';
+    facts.forEach((_,i)=>{const d=document.createElement('div');d.className='ticker-dot'+(i===0?' active':'');tickerDots.appendChild(d);});
   }
   function updateTicker(){
     tickerText.style.opacity='0';
     setTimeout(()=>{
-      tickerText.textContent = facts[tickerIndex];
+      tickerText.textContent=facts[tickerIndex];
       tickerText.style.opacity='1';
-      document.querySelectorAll('.ticker-dot').forEach((d,i)=>{
-        d.classList.toggle('active',i===tickerIndex);
-      });
+      document.querySelectorAll('.ticker-dot').forEach((d,i)=>d.classList.toggle('active',i===tickerIndex));
     },500);
     tickerIndex=(tickerIndex+1)%facts.length;
   }
   buildDots();
-  tickerText.textContent = facts[0];
-  tickerIndex = 1;
+  tickerText.textContent=facts[0];
+  tickerIndex=1;
   setInterval(updateTicker,8000);
 
   // ── CAROUSEL ──
-  const track = document.getElementById('carouselTrack');
-  let pos = 0;
-  const cardW = 320+20;
-  const maxPos = () => -(track.children.length-3)*cardW;
-  function slide(dir){
-    pos = Math.max(maxPos(), Math.min(0, pos + dir*-cardW));
-    track.style.transform=`translateX(${pos}px)`;
-  }
-  // drag-to-scroll
-  let startX, startPos, dragging=false;
+  const track=document.getElementById('carouselTrack');
+  let pos=0;
+  const cardW=320+20;
+  const maxPos=()=>-(track.children.length-3)*cardW;
+  function slide(dir){pos=Math.max(maxPos(),Math.min(0,pos+dir*-cardW));track.style.transform=`translateX(${pos}px)`;}
+  let startX,startPos,dragging=false;
   track.addEventListener('mousedown',e=>{startX=e.clientX;startPos=pos;dragging=true;});
   window.addEventListener('mousemove',e=>{if(!dragging)return;pos=Math.max(maxPos(),Math.min(0,startPos+(e.clientX-startX)));track.style.transform=`translateX(${pos}px)`;});
   window.addEventListener('mouseup',()=>{dragging=false;});
 
-  // ── CALENDAR ──
-  const eventDays=[16];
-  function buildCal(){
-    const grid=document.getElementById('calGrid');
-    const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
-    days.forEach(d=>{const el=document.createElement('div');el.className='cal-header';el.textContent=d;grid.appendChild(el);});
-    const firstDay=new Date(2025,7,1).getDay();
-    for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
-    for(let d=1;d<=31;d++){
+  // ── GOOGLE CALENDAR ──
+  const GCAL_KEY = 'AIzaSyCMk3izaMnRAUQjsL-iiKjMv3LcFwbNPX4';
+  const GCAL_ID  = 'd5679a747c25d36157e7afed62007e0255f0cf10fc689ec8af2d1a34f234e800@group.calendar.google.com';
+  const GCAL_BASE = 'https://www.googleapis.com/calendar/v3/calendars/';
+
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  async function gcalFetch(params){
+    const qs = new URLSearchParams({key:GCAL_KEY, singleEvents:'true', ...params}).toString();
+    const res = await fetch(GCAL_BASE + encodeURIComponent(GCAL_ID) + '/events?' + qs);
+    if(!res.ok) throw new Error('Calendar API ' + res.status);
+    return res.json();
+  }
+
+  function parseEvDate(dt){ return dt.dateTime ? new Date(dt.dateTime) : new Date(dt.date+'T00:00:00'); }
+
+  function fmtTimeRange(start, end){
+    if(!start.dateTime) return '';
+    const t = d => new Date(d).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    return t(start.dateTime) + (end&&end.dateTime ? ' – '+t(end.dateTime) : '');
+  }
+
+  // ── NEXT EVENT CARD ──
+  async function loadNextEvent(){
+    try {
+      const data = await gcalFetch({timeMin:new Date().toISOString(), maxResults:'1', orderBy:'startTime'});
+      if(!data.items?.length){
+        document.getElementById('eventName').textContent = 'No upcoming events';
+        document.getElementById('eventMeta').innerHTML = '<div class="event-meta-item">Check back soon for our next community event.</div>';
+        return;
+      }
+      const ev = data.items[0];
+      const start = parseEvDate(ev.start);
+      const dateStr = start.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+      const timeStr = fmtTimeRange(ev.start, ev.end);
+      const rawDesc = ev.description ? ev.description.replace(/<[^>]*>/g,'').trim() : 'Free Admission · Family Friendly';
+
+      document.getElementById('eventName').textContent = ev.summary || 'Upcoming Event';
+
+      let metaHTML = `
+        <div class="event-meta-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          ${esc(dateStr)}${timeStr ? ' · '+esc(timeStr) : ''}
+        </div>`;
+      if(ev.location){
+        metaHTML += `
+        <div class="event-meta-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.3 4 8 4 8s4-4.7 4-8c0-2.2-1.8-4-4-4z" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          ${esc(ev.location)}
+        </div>`;
+      }
+      metaHTML += `
+        <div class="event-meta-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          ${esc(rawDesc)}
+        </div>`;
+
+      document.getElementById('eventMeta').innerHTML = metaHTML;
+
+      const btn = document.getElementById('eventRegisterBtn');
+      if(ev.htmlLink){ btn.href=ev.htmlLink; btn.target='_blank'; btn.rel='noopener'; }
+    } catch(err){
+      console.error('loadNextEvent:', err);
+      document.getElementById('eventName').textContent = 'Unable to load event';
+      document.getElementById('eventMeta').innerHTML = '<div class="event-meta-item" style="opacity:.6;">Could not reach Google Calendar. Please try again later.</div>';
+    }
+  }
+
+  // ── CALENDAR MODAL ──
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth();
+
+  async function renderCalendar(){
+    const title = document.getElementById('calMonthTitle');
+    const grid  = document.getElementById('calGrid');
+    const list  = document.getElementById('calEventsList');
+
+    title.textContent = MONTHS[calMonth] + ' ' + calYear;
+    grid.innerHTML  = '<div class="cal-header">Su</div><div class="cal-header">Mo</div><div class="cal-header">Tu</div><div class="cal-header">We</div><div class="cal-header">Th</div><div class="cal-header">Fr</div><div class="cal-header">Sa</div>';
+    list.innerHTML  = '<p style="font-size:.85rem;color:var(--text-muted);margin-top:1.25rem;opacity:.6;">Loading events…</p>';
+
+    let events = [];
+    try {
+      const tMin = new Date(calYear, calMonth, 1).toISOString();
+      const tMax = new Date(calYear, calMonth+1, 1).toISOString();
+      const data = await gcalFetch({timeMin:tMin, timeMax:tMax, orderBy:'startTime', maxResults:'50'});
+      events = data.items || [];
+    } catch(e){ console.error('renderCalendar:', e); }
+
+    // Map events by day
+    const byDay = {};
+    events.forEach(ev => {
+      const d = parseEvDate(ev.start).getDate();
+      (byDay[d] = byDay[d]||[]).push(ev);
+    });
+
+    // Fill grid days
+    const firstDay    = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+    const today       = new Date();
+    const isCurMonth  = today.getFullYear()===calYear && today.getMonth()===calMonth;
+
+    for(let i=0;i<firstDay;i++){
+      const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el);
+    }
+    for(let d=1;d<=daysInMonth;d++){
       const el=document.createElement('div');
       el.className='cal-day';
       el.textContent=d;
-      if(eventDays.includes(d)){el.classList.add('has-event');}
+      if(isCurMonth && d===today.getDate()){
+        el.classList.add('today');
+      } else if(byDay[d]){
+        el.classList.add('has-event');
+        el.title=byDay[d].map(e=>e.summary).join(', ');
+        el.addEventListener('click',()=>document.getElementById('cal-ev-'+d)?.scrollIntoView({behavior:'smooth',block:'nearest'}));
+      }
       grid.appendChild(el);
     }
-  }
-  buildCal();
 
-  // close modal on backdrop click
-  document.getElementById('calModal').addEventListener('click',function(e){
-    if(e.target===this)this.classList.remove('open');
-  });
+    // Event list below grid
+    list.innerHTML='';
+    if(!events.length){
+      list.innerHTML='<p style="font-size:.85rem;color:var(--text-muted);margin-top:1.5rem;text-align:center;">No events this month.</p>';
+      return;
+    }
+    events.forEach(ev => {
+      const start   = parseEvDate(ev.start);
+      const dateStr = start.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+      const timeStr = fmtTimeRange(ev.start, ev.end);
+      const rawDesc = ev.description ? ev.description.replace(/<[^>]*>/g,'').trim() : '';
+
+      const item = document.createElement('div');
+      item.id = 'cal-ev-' + start.getDate();
+      item.style.cssText = 'margin-top:1rem;background:rgba(123,158,135,.3);border:1px solid rgba(123,158,135,.55);border-radius:12px;padding:1.25rem;';
+      item.innerHTML = `
+        <div style="font-weight:500;color:var(--canopy);margin-bottom:.4rem;">🌱 ${esc(ev.summary||'Event')}</div>
+        <div style="font-size:.85rem;color:var(--text-muted);">${esc(dateStr)}${timeStr?' · '+esc(timeStr):''}${ev.location?' · '+esc(ev.location):''}</div>
+        ${rawDesc?`<div style="font-size:.8rem;color:var(--text-muted);margin-top:.35rem;">${esc(rawDesc)}</div>`:''}`;
+      list.appendChild(item);
+    });
+  }
+
+  document.getElementById('calPrev').addEventListener('click',()=>{if(--calMonth<0){calMonth=11;calYear--;}renderCalendar();});
+  document.getElementById('calNext').addEventListener('click',()=>{if(++calMonth>11){calMonth=0;calYear++;}renderCalendar();});
+
+  function openCalendar(){
+    document.getElementById('calModal').classList.add('open');
+    renderCalendar();
+  }
+
+  document.getElementById('calModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+  // ── INIT ──
+  loadNextEvent();
 </script>
 </body>
 </html>

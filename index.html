@@ -351,9 +351,9 @@
         </div>
         <a href="#join" class="btn-primary" id="eventRegisterBtn" style="font-size:.9rem;padding:.75rem 1.5rem;">Register Now →</a>
       </div>
-      <div class="event-visual">
-        📸 Upload your event poster or banner image here<br/><br/>
-        <code style="font-size:.75rem;opacity:.6;">&lt;img src="event-poster.jpg"/&gt;</code>
+      <div id="miniCal" style="background:#fff;border-radius:16px;padding:1rem 1.25rem;min-height:260px;display:flex;flex-direction:column;border:1px solid rgba(123,158,135,.3);box-shadow:0 2px 8px rgba(0,0,0,.06);">
+        <div id="miniCalTitle" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--canopy);text-align:center;margin-bottom:.5rem;"></div>
+        <div id="miniCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;flex:1;align-content:start;"></div>
       </div>
     </div>
 
@@ -620,6 +620,46 @@
     }
   }
 
+  // ── MINI CALENDAR (event card) ──
+  async function renderMiniCal(){
+    const now = new Date();
+    const yr  = now.getFullYear();
+    const mo  = now.getMonth();
+    const title = document.getElementById('miniCalTitle');
+    const grid  = document.getElementById('miniCalGrid');
+    if(!title || !grid) return;
+
+    title.textContent = MONTHS[mo] + ' ' + yr;
+    grid.innerHTML = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-header">${d}</div>`).join('');
+
+    const byDay = {};
+    try {
+      const tMin = new Date(yr, mo, 1).toISOString();
+      const tMax = new Date(yr, mo+1, 1).toISOString();
+      const data = await gcalFetch({timeMin:tMin, timeMax:tMax, orderBy:'startTime', maxResults:'50'});
+      (data.items||[]).forEach(ev => {
+        const d = parseEvDate(ev.start).getDate();
+        (byDay[d] = byDay[d]||[]).push(ev);
+      });
+    } catch(e){ console.error('renderMiniCal:', e); }
+
+    const firstDay    = new Date(yr, mo, 1).getDay();
+    const daysInMonth = new Date(yr, mo+1, 0).getDate();
+    const todayD      = now.getDate();
+
+    for(let i=0;i<firstDay;i++){
+      const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el);
+    }
+    for(let d=1;d<=daysInMonth;d++){
+      const el=document.createElement('div');
+      el.className='cal-day';
+      el.textContent=d;
+      if(d===todayD){ el.classList.add('today'); }
+      else if(byDay[d]){ el.classList.add('has-event'); el.title=byDay[d].map(e=>e.summary).join(', '); }
+      grid.appendChild(el);
+    }
+  }
+
   // ── CALENDAR MODAL ──
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   let calYear = new Date().getFullYear();
@@ -710,6 +750,7 @@
 
   // ── INIT ──
   loadNextEvent();
+  renderMiniCal();
 </script>
 </body>
 </html>
